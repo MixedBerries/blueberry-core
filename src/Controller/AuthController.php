@@ -24,11 +24,11 @@ class AuthController
         $entity = $this->loginUser($args['credential'], $args['password']);
         break;
     }
-    if ($result)
+    if ($entity)
     {
       $token = $this->generateToken($entity);
 
-      return $response->write('jwt' => $token);
+      return $response->write('{"jwt" => '.$token.'}');
     }
   }
   /**
@@ -41,9 +41,16 @@ class AuthController
 
   private function generateToken($entity)
   {
+    $scopes = [];
+    $roles = $entity->roles();
+    foreach ($roles as $role) {
+      array_merge($scopes, $role->scopes()['description']);
+    }
     $token = [
-      'iat' => time();
-
+      'iat' => time(),
+      'iss' => $_SERVER['HTTP_HOST'],
+      'exp' => time() + 3600;
+      'scopes' => $scopes
     ];
     return JWT::encode($token, $this->secret);
   }

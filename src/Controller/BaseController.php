@@ -45,6 +45,18 @@ class BaseController
     return $response->withStatus(405)->getBody()->write('Method not allowed');
   }
   /**
+   * array_merge, but we merge an object with an array_merge
+   *
+   */
+  protected function object_array_merge($object, $array)
+  {
+    foreach ($array as $key => $value) {
+      $object->$key = $value;
+    }
+
+    return $object;
+  }
+  /**
   * because we use the Controller as a callable in the routes, __invoke is needed to redirect to the correct function
   *
   */
@@ -53,7 +65,7 @@ class BaseController
     $method = $request->getMethod();
     switch ($method) {
       case 'GET':
-        if($args['id'])
+        if(isset($args['id']))
         {
           $this->show($request, $response, $args);
         } else {

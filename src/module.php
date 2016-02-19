@@ -12,5 +12,11 @@ $container['credential'] = function($c) {
 };
 
 // Routes
-
-$app->post('/api/core/auth', 'AuthController');
+$app->group('/api', function() {
+  $this->group('/core', function() {
+    $this->post('/auth', 'AuthController');
+    $this->any('/users[/{id}]', 'UserController');
+    $this->any('/roles[/{id}]', 'RoleController');
+    $this->any('/scopes[/{id}]', 'ScopeController');
+  });
+});

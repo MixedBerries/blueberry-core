@@ -2,6 +2,9 @@
     "name": "mixedberries/blueberry-core",
     "description": "The Core module for the MixedBerries CMS PHP (Blueberry) backend",
     "type": "project",
+    "config": {
+      "vendor-dir": "modules"
+    },
     "require": {
         "slim/slim": "^3.1",
         "illuminate/database": "^5.2",

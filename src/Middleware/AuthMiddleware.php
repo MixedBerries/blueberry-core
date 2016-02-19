@@ -24,14 +24,14 @@ class AuthMiddleware
      $scope = $request->getAttribute('route')->getName();
      $jwt = $this->getToken($request);
      $token = $this->decodeToken($jwt);
-     if (in_array($scope, $token['scopes']))
+     if (in_array($scope, $token['scopes']) && time() <= $token['exp'])
      {
        return $next($request, $response);
      }
      // Not allowed, but why? Are we logged in?
-     if (!$request->hasHeader('Authorization'))
+     if (!$request->hasHeader('Authorization') || time() > $token['exp'])
      {
-       // Not logged in, give the chance to log in.
+       // Not logged in or token has expired, give the chance to log in.
        return $response->withStatus(401);
      }
      //Logged in, but not allowed to access route

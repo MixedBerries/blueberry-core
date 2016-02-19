@@ -14,7 +14,7 @@ class RouteScopeMiddleWare
   {
     $scope = "";
     $route = $request->getAttribute('route');
-    $resource = $route->getIdentifier();
+    $resource = explode('/', $route->getPattern())[3];
     $method = $request->getMethod;
     switch ($method) {
       case 'GET':
