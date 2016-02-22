@@ -21,7 +21,7 @@ class AuthMiddleware
    */
    public function __invoke($request, $response, $next)
    {
-     $scope = $request->getAttribute('route')->getName();
+     $scope = $this->getScope($request);
      $jwt = $this->getToken($request);
      $token = $this->decodeToken($jwt);
      if (in_array($scope, $token['scopes']) && time() <= $token['exp'])
@@ -36,6 +36,25 @@ class AuthMiddleware
      }
      //Logged in, but not allowed to access route
      return $response->withStatus(403);
+   }
+
+   private function getScope($request)
+   {
+     $resource = $request->getAttribute('route')->getName();
+     $method = $request->getMethod;
+     switch ($method) {
+       case 'GET':
+         $scope = $resource.':read';
+         break;
+       case 'POST':
+         $scope = $resource.':create';
+       case 'PUT':
+         $scope = $resource.':edit';
+       case 'DELETE':
+         $scope = $resource.':delete';
+     }
+
+     return $scope;
    }
 
    private function getToken($request)

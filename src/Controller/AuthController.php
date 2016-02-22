@@ -41,16 +41,20 @@ class AuthController
 
   private function generateToken($entity)
   {
-    $scopes = [];
-    $roles = $entity->roles();
-    foreach ($roles as $role) {
-      array_merge($scopes, $role->scopes()['description']);
+    $scopes = $entity->scopes();
+    $tokenScopes = [];
+    foreach ($scopes() as $scope) {
+      if (!in_array($scope['description'], $tokenScopes))
+      {
+        array_push($tokenScopes, $scope['description']);
+      }
     }
+
     $token = [
       'iat' => time(),
       'iss' => $_SERVER['HTTP_HOST'],
       'exp' => time() + 3600;
-      'scopes' => $scopes
+      'scopes' => $tokenScopes
     ];
     return JWT::encode($token, $this->secret);
   }

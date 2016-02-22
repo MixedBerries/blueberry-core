@@ -14,9 +14,9 @@ $container['credential'] = function($c) {
 // Routes
 $app->group('/api', function() {
   $this->group('/core', function() {
-    $this->post('/auth', 'AuthController');
-    $this->any('/users[/{id}]', 'UserController');
-    $this->any('/roles[/{id}]', 'RoleController');
-    $this->any('/scopes[/{id}]', 'ScopeController');
+    $this->post('/auth', 'AuthController')->setName('auth');
+    $this->any('/users[/{id}]', 'UserController')->setName('users');
+    $this->any('/roles[/{id}]', 'RoleController')->setName('roles');
+    $this->any('/scopes[/{id}]', 'ScopeController')->setName('scopes');
   });
 });

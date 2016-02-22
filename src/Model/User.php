@@ -30,6 +30,16 @@ class User extends Model
   {
     return $this->belongsToMany('Blueberry\Core\Model\Role');
   }
+
+  public function scopes()
+  {
+    return $this->hasManyThrough('Blueberry\Core\Model\Scope', 'Blueberry\Core\Model\Role');
+  }
+
+  public function files()
+  {
+    return $this->hasMany('Blueberry\Core\Model\User');
+  }
   /**
    * Override of the create function, to incorporate a salt for password generation
    *
