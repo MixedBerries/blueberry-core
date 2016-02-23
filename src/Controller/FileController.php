@@ -28,12 +28,25 @@ class FileController extends BaseController;
   protected function create($request, $response, $args)
   {
     $data = $request->getParsedBody();
-    $files = $request->getUploadedFiles();
+    $uri = $request->getUri();
+    $files = $request->getUploadedFiles()['files'];
     $collection = new Illuminate\Database\Eloquent\Collection();
-    array_walk_recursive($files, 'upload', $collection);
-    $file = File::create($data);
+    foreach ($files as $file) {
+      if ($file->getError() === UPLOAD_ERR_OK)
+      {
+        $file = File::create([
+          'name' => ucfirst($file->getClientFilename()),
+          'filename' => $file->getClientFilename(),
+          'filetype' => $file->getClientMediaType(),
+          'filesize' => $file->getSize(),
+          'url' => $uri->getScheme().'://'.$uri->getHost().'/media/'.$file->getClientFilename();
+        ]);
+        $collection->push($file);
 
-    $return $response->write($file->toJson());
+        $file->moveTo($this->mediaDir.$file->getClientFilename());
+      }
+    }
+    $return $response->write($collection->toJson());
   }
 
   protected function update($request, $response, $args)
@@ -41,7 +54,7 @@ class FileController extends BaseController;
     $data = $request->getParsedBody();
     $file = File::findOrFail($args['id']);
     $file = $this->object_array_merge($file, $data);
-
+    
     return $response->write($file->toJson());
   }
 
@@ -50,18 +63,5 @@ class FileController extends BaseController;
     File::destroy($args['id']);
 
     return $response;
-  }
-
-  private function upload($item, $key, &$collection)
-  {
-    if ($item instanceof UploadedFile)
-    {
-      $file = File::create([
-        'filename' =>  $file->getClientFilename(),
-        'filetype' => $file->getClientMediaType(),
-        'filesize' => $file->getSize(),
-      ]);
-      $collection->push($file);
-    }
   }
 }
