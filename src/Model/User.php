@@ -14,7 +14,7 @@ class User extends Model
    *
    * @var array
    */
-  protected $fillable = ['username', 'firstname', 'lastname', 'email', 'password'];
+  protected $fillable = ['username', 'firstname', 'lastname', 'email'];
   /**
    * The fields that are hidden from end users
    * @var array
@@ -52,11 +52,14 @@ class User extends Model
    *
    * @param array attributes[];
    */
-  public static function create(array $atttibutes = [])
+  public static function create(array $attributes = [])
   {
-    $atttibutes['password'] = password_hash($atttibutes['password'], PASSWORD_BCRYPT);
-    $model = parent::create($atttibutes);
-    return $model;
+    if (self::isUnguarded())
+    {
+      $attributes['password'] = password_hash($attributes['password'], PASSWORD_BCRYPT);
+      $model = parent::create($attributes);
+      return $model;
+    }
   }
 
   public static function login($credential, $password)

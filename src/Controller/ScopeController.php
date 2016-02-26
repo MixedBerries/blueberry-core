@@ -37,7 +37,7 @@ class ScopeController extends BaseController
     $data = $request->getParsedBody();
     $scope = Scope::findOrFail($args['id']);
     $scope = $this->object_array_merge($scope, $data);
-
+    $scope->save();
     return $response->write($scope->toJson());
   }
 

@@ -37,7 +37,7 @@ class RoleController extends BaseController
     $data = $request->getParsedBody();
     $role = Role::findOrFail($args['id']);
     $role = $this->object_array_merge($role, $data);
-
+    $role->save();
     return $response->write($role->toJson());
   }
 

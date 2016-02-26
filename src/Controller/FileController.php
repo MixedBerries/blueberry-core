@@ -4,6 +4,7 @@ namespace Blueberry\Core\Controller;
 
 use Blueberry\Core\Model\File;
 use Slim\Http\UploadedFile;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  *
@@ -29,8 +30,8 @@ class FileController extends BaseController
   {
     $data = $request->getParsedBody();
     $uri = $request->getUri();
-    $files = $request->getUploadedFiles()['files'];
-    $collection = new Illuminate\Database\Eloquent\Collection();
+    $files = $request->getUploadedFiles();
+    $collection = new Collection();
     foreach ($files as $file) {
       if ($file->getError() === UPLOAD_ERR_OK)
       {
@@ -54,7 +55,7 @@ class FileController extends BaseController
     $data = $request->getParsedBody();
     $file = File::findOrFail($args['id']);
     $file = $this->object_array_merge($file, $data);
-
+    $file->save();
     return $response->write($file->toJson());
   }
 

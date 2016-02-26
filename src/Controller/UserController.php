@@ -27,9 +27,13 @@ class UserController extends BaseController
   protected function create($request, $response, $args)
   {
     $data = $request->getParsedBody();
-    $user = User::create($data);
-
-    return $response->write($user->toJson());
+    if ($data)
+    {
+      User::unguard();
+      $user = User::create($data);
+      User::reguard();
+      return $response->write($user->toJson());
+    }
   }
 
   protected function update($request, $response, $args)
@@ -37,7 +41,8 @@ class UserController extends BaseController
     $data = $request->getParsedBody();
     $user = User::findOrFail($args['id']);
     $user = $this->object_array_merge($user, $data);
-
+    $user->password = password_hash($data['password'], PASSWORD_BCRYPT);
+    $user->save();
     return $response->write($user->toJson());
   }
 
