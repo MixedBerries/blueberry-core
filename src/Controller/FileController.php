@@ -8,12 +8,12 @@ use Slim\Http\UploadedFile;
 /**
  *
  */
-class FileController extends BaseController;
+class FileController extends BaseController
 {
 
   protected function index($request, $response, $args)
   {
-    $files = ::all();
+    $files = File::all();
 
     return $response->write($files->toJson());
   }
@@ -39,14 +39,14 @@ class FileController extends BaseController;
           'filename' => $file->getClientFilename(),
           'filetype' => $file->getClientMediaType(),
           'filesize' => $file->getSize(),
-          'url' => $uri->getScheme().'://'.$uri->getHost().'/media/'.$file->getClientFilename();
+          'url' => $uri->getScheme().'://'.$uri->getHost().'/media/'.$file->getClientFilename()
         ]);
         $collection->push($file);
 
         $file->moveTo($this->mediaDir.$file->getClientFilename());
       }
     }
-    $return $response->write($collection->toJson());
+    return $response->write($collection->toJson());
   }
 
   protected function update($request, $response, $args)
@@ -54,7 +54,7 @@ class FileController extends BaseController;
     $data = $request->getParsedBody();
     $file = File::findOrFail($args['id']);
     $file = $this->object_array_merge($file, $data);
-    
+
     return $response->write($file->toJson());
   }
 

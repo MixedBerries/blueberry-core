@@ -2,7 +2,7 @@
 
 namespace Blueberry\Core\Model;
 
-use illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  *
@@ -14,7 +14,7 @@ class User extends Model
    *
    * @var array
    */
-  protected $fillable = ['username', 'firstname', 'lastname', 'email', 'salt', 'password'];
+  protected $fillable = ['username', 'firstname', 'lastname', 'email', 'password'];
   /**
    * The fields that are hidden from end users
    * @var array
@@ -26,6 +26,13 @@ class User extends Model
    * @var string
    */
   protected $table = 'core_users';
+  /**
+   * Users don't having an auto_incrementing id
+   *
+   * @var bool
+   */
+  public $incrementing = false;
+
   public function roles()
   {
     return $this->belongsToMany('Blueberry\Core\Model\Role');
@@ -38,7 +45,7 @@ class User extends Model
 
   public function files()
   {
-    return $this->hasMany('Blueberry\Core\Model\User');
+    return $this->hasMany('Blueberry\Core\Model\File');
   }
   /**
    * Override of the create function, to incorporate a salt for password generation
@@ -47,9 +54,9 @@ class User extends Model
    */
   public static function create(array $atttibutes = [])
   {
-    $attributes['salt'] = mcrypt_create_iv(22, MCRYPT_DEV_URANDOM);
-    $atttibutes['password'] = password_hash($atttibutes['password'], PASSWORD_BCRYPT, ['salt' => $attributes['salt']]);
-    parent::create($atttibutes);
+    $atttibutes['password'] = password_hash($atttibutes['password'], PASSWORD_BCRYPT);
+    $model = parent::create($atttibutes);
+    return $model;
   }
 
   public static function login($credential, $password)
@@ -60,4 +67,22 @@ class User extends Model
       return $user;
     }
   }
+
+  /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        /**
+         * Attach to the 'creating' Model Event to provide a UUID
+         * for the `id` field (provided by $model->getKeyName())
+         */
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = uniqid();
+        });
+    }
 }

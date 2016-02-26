@@ -14,13 +14,13 @@ class Scope extends Model
      *
      * @var array
      */
-  protected $fillable = ['description'];
+  protected $fillable = ['scopename'];
   /**
      * The table associated with the model.
      *
      * @var string
      */
-  protected $table = 'core_oauth_scopes';
+  protected $table = 'core_scopes';
 
   public function roles()
   {

@@ -74,10 +74,13 @@ class BaseController
         break;
       case 'POST':
         $this->create($request, $response, $args);
+        break;
       case 'PUT':
         $this->update($request, $response, $args);
+        break;
       case 'DELETE':
-        $this->destroy($request, $response, $args)
+        $this->destroy($request, $response, $args);
+        break;
       default:
         return $response->withStatus(405)->getBody()->write('Method not allowed');
         break;

@@ -7,7 +7,7 @@ use Blueberry\Core\Model\User;
 /**
  *
  */
-class UserController extends BaseController;
+class UserController extends BaseController
 {
 
   protected function index($request, $response, $args)
@@ -29,7 +29,7 @@ class UserController extends BaseController;
     $data = $request->getParsedBody();
     $user = User::create($data);
 
-    $return $response->write($user->toJson());
+    return $response->write($user->toJson());
   }
 
   protected function update($request, $response, $args)

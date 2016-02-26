@@ -7,7 +7,7 @@ use Blueberry\Core\Model\Role;
 /**
  *
  */
-class RoleController extends BaseController;
+class RoleController extends BaseController
 {
 
   protected function index($request, $response, $args)
@@ -29,7 +29,7 @@ class RoleController extends BaseController;
     $data = $request->getParsedBody();
     $role = Role::create($data);
 
-    $return $response->write($role->toJson());
+    return $response->write($role->toJson());
   }
 
   protected function update($request, $response, $args)

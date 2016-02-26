@@ -7,7 +7,7 @@ use Blueberry\Core\Model\Scope;
 /**
  *
  */
-class ScopeController extends BaseController;
+class ScopeController extends BaseController
 {
 
   protected function index($request, $response, $args)
@@ -29,7 +29,7 @@ class ScopeController extends BaseController;
     $data = $request->getParsedBody();
     $scope = Scope::create($data);
 
-    $return $response->write($scope->toJson());
+    return $response->write($scope->toJson());
   }
 
   protected function update($request, $response, $args)
