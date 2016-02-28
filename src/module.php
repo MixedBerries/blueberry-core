@@ -19,6 +19,13 @@ $container['credential'] = function($c) {
   return $c->get('settings')['credential'];
 };
 
+foreach ($container->get('settings')['services'] as $service => $class)
+{
+  $container[$service] = function($c) use ($class) {
+    return new $class($c);
+  };
+};
+
 // Database setup
 $capsule = new Illuminate\Database\Capsule\Manager();
 $capsule->addConnection($container->get('settings')['database']);
@@ -31,7 +38,7 @@ $capsule->bootEloquent();
 // Routes
 $app->group('/api', function() {
   $this->group('/core', function() {
-    $this->post('/auth', 'AuthController')->setName('auth');
+    $this->post('/auth', 'Blueberry\Core\Controller\AuthController:authenticate')->setName('auth');
     $this->any('/users[/{id}]', 'Blueberry\Core\Controller\UserController')->setName('users');
     $this->any('/roles[/{id}]', 'Blueberry\Core\Controller\RoleController')->setName('roles');
     $this->any('/scopes[/{id}]', 'Blueberry\Core\Controller\ScopeController')->setName('scopes');

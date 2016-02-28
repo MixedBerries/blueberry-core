@@ -2,12 +2,29 @@
 
 namespace Blueberry\Core\Controller;
 
+use Interop\Container\ContainerInterface;
+
 class BaseController
 {
   /**
-  * handles HTTP GET
-  * returns list
-  */
+   * DI container
+   *
+   * @var ContainerInterface
+   */
+  protected $container;
+  /**
+   * constructor
+   *
+   * @param ContainerInterface
+   */
+  public function __construct(ContainerInterface $container)
+  {
+    $this->container = $container;
+  }
+  /**
+   * handles HTTP GET
+   * returns list
+   */
   protected function index($request, $response, $args)
   {
     return $response->withStatus(405)->getBody()->write('Method not allowed');
@@ -85,5 +102,23 @@ class BaseController
         return $response->withStatus(405)->getBody()->write('Method not allowed');
         break;
     }
+  }
+  /**
+   * Bridge container get
+   *
+   * @param string $name
+   */
+  public function __get($name)
+  {
+      return $this->container->get($name);
+  }
+  /**
+   * Bridge container has
+   *
+   * @param string $name
+   */
+  public function __isset($name)
+  {
+      return $this->container->has($name);
   }
 }

@@ -30,8 +30,9 @@ class FileController extends BaseController
   {
     $data = $request->getParsedBody();
     $uri = $request->getUri();
-    $files = $request->getUploadedFiles();
+    $files = $request->getUploadedFiles()['files'];
     $collection = new Collection();
+    echo $this->settings['mediaDir'];
     foreach ($files as $file) {
       if ($file->getError() === UPLOAD_ERR_OK)
       {
@@ -44,7 +45,7 @@ class FileController extends BaseController
         ]);
         $collection->push($file);
 
-        $file->moveTo($this->mediaDir.$file->getClientFilename());
+        $file->moveTo($this->settings['mediaDir'].$file->getClientFilename());
       }
     }
     return $response->write($collection->toJson());

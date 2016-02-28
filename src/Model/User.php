@@ -19,7 +19,7 @@ class User extends Model
    * The fields that are hidden from end users
    * @var array
    */
-  protected $hidden = ['salt', 'password'];
+  protected $hidden = ['password'];
   /**
    * The table associated with the model.
    *
@@ -59,15 +59,6 @@ class User extends Model
       $attributes['password'] = password_hash($attributes['password'], PASSWORD_BCRYPT);
       $model = parent::create($attributes);
       return $model;
-    }
-  }
-
-  public static function login($credential, $password)
-  {
-    $user = $this::where($this->credential, $credential)->get();
-    if (password_verify($password, $user->password))
-    {
-      return $user;
     }
   }
 
