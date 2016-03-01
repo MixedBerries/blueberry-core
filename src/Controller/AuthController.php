@@ -17,29 +17,9 @@ class AuthController extends BaseController
     $entity = $this->auth->authenticate($data);
     if ($entity)
     {
-      $token = $this->generateToken($entity);
+      $token = $this->token->generateToken($entity);
 
-      return $response->write('{"jwt" => '.$token.'}');
+      return $response->write($token);
     }
-  }
-
-  private function generateToken($entity)
-  {
-    $scopes = $entity->scopes();
-    $tokenScopes = [];
-    foreach ($scopes as $scope) {
-      if (!in_array($scope['description'], $tokenScopes))
-      {
-        array_push($tokenScopes, $scope['description']);
-      }
-    }
-
-    $token = [
-      'iat' => time(),
-      'iss' => $_SERVER['HTTP_HOST'],
-      'exp' => time() + 3600,
-      'scopes' => $tokenScopes
-    ];
-    return JWT::encode($token, $this->secret);
   }
 }

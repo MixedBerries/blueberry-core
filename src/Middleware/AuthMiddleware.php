@@ -9,6 +9,11 @@ use Firebase\JWT\JWT;
  */
 class AuthMiddleware
 {
+  protected $container;
+  public function __construct($container)
+  {
+    $this->container = $container;
+  }
 
   /**
    * Authentication and authorization middleware
@@ -23,7 +28,7 @@ class AuthMiddleware
    {
      $scope = $this->getScope($request);
      $jwt = $this->getToken($request);
-     $token = $this->decodeToken($jwt);
+     $token = $jwt ? $this->decodeToken($jwt) : [];
      if (in_array($scope, $token['scopes']) && time() <= $token['exp'])
      {
        return $next($request, $response);
@@ -41,19 +46,21 @@ class AuthMiddleware
    private function getScope($request)
    {
      $resource = $request->getAttribute('route')->getName();
-     $method = $request->getMethod;
+     $method = $request->getMethod();
      switch ($method) {
        case 'GET':
          $scope = $resource.':read';
          break;
        case 'POST':
          $scope = $resource.':create';
+         break;
        case 'PUT':
          $scope = $resource.':edit';
+         break;
        case 'DELETE':
          $scope = $resource.':delete';
+         break;
      }
-
      return $scope;
    }
 
@@ -62,11 +69,16 @@ class AuthMiddleware
      $header = $request->getHeader('Authorization');
      $header = isset($header[0]) ? $header[0] : "";
      preg_match("/Bearer\s+(.*)$/i", $header, $matches);
-     return $matches[1];
+     return isset($matches[1]) ? $matches[1] : null;
    }
 
    private function decodeToken($jwt)
    {
      return JWT::decode($jwt, $this->secret);
+   }
+
+   public function __get($name)
+   {
+     return $this->container->get($name);
    }
 }

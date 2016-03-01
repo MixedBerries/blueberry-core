@@ -12,6 +12,10 @@ return [
     // Services
     'services' => [
       'auth' => 'Blueberry\Core\Service\AuthService',
+      'token' => 'Blueberry\Core\Service\TokenService',
+    ],
+    'middlewares' => [
+      'authmw' => 'Blueberry\Core\Middleware\AuthMiddleware'
     ],
     // Database configuration
     'database' => [

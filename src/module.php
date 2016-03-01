@@ -26,6 +26,13 @@ foreach ($container->get('settings')['services'] as $service => $class)
   };
 };
 
+foreach ($container->get('settings')['middlewares'] as $mw => $class)
+{
+  $container[$mw] = function($c) use ($class) {
+    return new $class($c);
+  };
+};
+
 // Database setup
 $capsule = new Illuminate\Database\Capsule\Manager();
 $capsule->addConnection($container->get('settings')['database']);
@@ -44,4 +51,4 @@ $app->group('/api', function() {
     $this->any('/scopes[/{id}]', 'Blueberry\Core\Controller\ScopeController')->setName('scopes');
     $this->any('/files[/{id}]', 'Blueberry\Core\Controller\FileController')->setName('scopes');
   });
-});
+})->add('Blueberry\Core\Middleware\AuthMiddleware');
