@@ -50,5 +50,5 @@ $app->group('/api', function() {
     $this->any('/roles[/{id}]', 'Blueberry\Core\Controller\RoleController')->setName('roles');
     $this->any('/scopes[/{id}]', 'Blueberry\Core\Controller\ScopeController')->setName('scopes');
     $this->any('/files[/{id}]', 'Blueberry\Core\Controller\FileController')->setName('scopes');
-  });
-})->add('Blueberry\Core\Middleware\AuthMiddleware');
+  })->add('Blueberry\Core\Middleware\AuthMiddleware');
+});

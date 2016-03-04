@@ -2,8 +2,6 @@
 
 namespace Blueberry\Core\Middleware;
 
-use Firebase\JWT\JWT;
-
 /**
  *
  */
@@ -27,8 +25,13 @@ class AuthMiddleware
    public function __invoke($request, $response, $next)
    {
      $scope = $this->getScope($request);
-     $jwt = $this->getToken($request);
-     $token = $jwt ? $this->decodeToken($jwt) : [];
+     $jwt = $this->auth->getToken($request);
+     if ($jwt)
+     {
+       $token = $this->auth->decodeToken($jwt);
+     } else {
+       $token = $this->auth->getPublicToken();
+     }
      if (in_array($scope, $token['scopes']) && time() <= $token['exp'])
      {
        return $next($request, $response);
@@ -41,7 +44,7 @@ class AuthMiddleware
      }
      //Logged in, but not allowed to access route
      return $response->withStatus(403);
-   }
+  }
 
    private function getScope($request)
    {
@@ -62,19 +65,6 @@ class AuthMiddleware
          break;
      }
      return $scope;
-   }
-
-   private function getToken($request)
-   {
-     $header = $request->getHeader('Authorization');
-     $header = isset($header[0]) ? $header[0] : "";
-     preg_match("/Bearer\s+(.*)$/i", $header, $matches);
-     return isset($matches[1]) ? $matches[1] : null;
-   }
-
-   private function decodeToken($jwt)
-   {
-     return JWT::decode($jwt, $this->secret);
    }
 
    public function __get($name)

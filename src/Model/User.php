@@ -40,7 +40,17 @@ class User extends Model
 
   public function scopes()
   {
-    return $this->hasManyThrough('Blueberry\Core\Model\Scope', 'Blueberry\Core\Model\Role');
+    //return $this->hasManyThrough('Blueberry\Core\Model\Scope', 'Blueberry\Core\Model\Role');
+    $scopes = [];
+    foreach ($this->roles as $role) {
+      foreach ($role->scopes as $scope) {
+        if (!isset($scopes[$scope->id]))
+        {
+          $scopes[$scope->id] = $scope;
+        }
+      }
+    }
+    return \Illuminate\Database\Eloquent\Collection::make($scopes);
   }
 
   public function files()

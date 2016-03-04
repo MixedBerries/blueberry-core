@@ -17,7 +17,7 @@ class AuthController extends BaseController
     $entity = $this->auth->authenticate($data);
     if ($entity)
     {
-      $token = $this->token->generateToken($entity);
+      $token = $this->auth->generateToken($entity);
 
       return $response->write($token);
     }
