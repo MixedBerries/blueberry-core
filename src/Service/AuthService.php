@@ -32,42 +32,38 @@ class AuthService extends BaseService
     $header = $request->getHeader('Authorization');
     if (isset($header[0]))
     {
-      $header = isset($header[0]);
+      $header = $header[0];
       preg_match("/Bearer\s+(.*)$/i", $header, $matches);
       return isset($matches[1]) ? $matches[1] : null;
     }
   }
 
-  public function generateToken($entity)
+  public function generateToken($entity, $jwt = true)
   {
     $scopes = $this->buildScopes($entity);
-
     $token = [
       'iat' => time(),
       'iss' => $_SERVER['HTTP_HOST'],
       'exp' => time() + 3600,
       'scopes' => $scopes
     ];
-
-    return json_encode(['jwt' => JWT::encode($token, $this->secret)]);
+    if ($jwt)
+    {
+      return json_encode(['jwt' => JWT::encode($token, $this->secret)]);
+    } else {
+      return $token;
+    }
   }
 
   public function decodeToken($jwt)
   {
-    return JWT::decode($jwt, $this->secret);
+    return (array) JWT::decode($jwt, $this->secret, array('HS256'));
   }
 
   public function getPublicToken()
   {
     $role = Role::where('rolename', 'public')->firstOrFail();
-    $scopes = $this->buildScopes($role);
-    $token = [
-      'iat' => time(),
-      'iss' => $_SERVER['HTTP_HOST'],
-      'exp' => time() + 3600,
-      'scopes' => $scopes
-    ];
-    return $token;
+    return $this->generateToken($role,false);
   }
 
   protected function loginUser($credential, $password)
@@ -82,6 +78,10 @@ class AuthService extends BaseService
   protected function buildScopes($entity)
   {
     $scopes = [];
+    if ($entity instanceof \Illuminate\Database\Eloquent\Collection)
+    {
+      $entity = $entity->flatten();
+    }
     foreach ($entity->scopes as $scope) {
       if (!in_array($scope['scopename'], $scopes))
       {

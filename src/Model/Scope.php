@@ -24,6 +24,6 @@ class Scope extends Model
 
   public function roles()
   {
-    return $this->belongsToMany('Blueberry\Core\Model\Role');
+    return $this->belongsToMany('Blueberry\Core\Model\Role', 'core_role_scopes');
   }
 }

@@ -10,7 +10,6 @@ use Blueberry\Core\Model\User;
  */
 class AuthController extends BaseController
 {
-
   public function authenticate($request, $response, $args)
   {
     $data = $request->getParsedBody();

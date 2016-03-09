@@ -24,11 +24,11 @@ class Role extends Model
 
   public function scopes()
   {
-    return $this->belongsToMany('Blueberry\Core\Model\Scope');
+    return $this->belongsToMany('Blueberry\Core\Model\Scope', 'core_role_scopes');
   }
 
   public function users()
   {
-    return $this->belongsToMany('Blueberry\Core\Model\User');
+    return $this->belongsToMany('Blueberry\Core\Model\User', 'core_user_roles');
   }
 }
