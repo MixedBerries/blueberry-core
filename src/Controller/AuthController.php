@@ -2,9 +2,6 @@
 
 namespace Blueberry\Core\Controller;
 
-use Firebase\JWT\JWT;
-use Blueberry\Core\Model\User;
-
 /**
  *
  */
@@ -20,5 +17,6 @@ class AuthController extends BaseController
 
       return $response->write($token);
     }
+    $this->flash->addMessage('Login', 'Username or password incorrect');
   }
 }

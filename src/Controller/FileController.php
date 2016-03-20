@@ -30,20 +30,28 @@ class FileController extends BaseController
   {
     $data = $request->getParsedBody();
     $uri = $request->getUri();
-    $files = $request->getUploadedFiles()['files'];
+    $files = $request->getUploadedFiles();
+    array_walk_recursive($files, function($v, $k) use ($files)
+    {
+      if ($v instanceof UploadedFile)
+      {
+        $files[] = $v;
+      }
+    });
     $collection = new Collection();
-    echo $this->settings['mediaDir'];
-    foreach ($files as $file) {
+    foreach ($files as $file)
+    {
       if ($file->getError() === UPLOAD_ERR_OK)
       {
-        $file = File::create([
+        $f = File::create([
           'name' => ucfirst($file->getClientFilename()),
           'filename' => $file->getClientFilename(),
           'filetype' => $file->getClientMediaType(),
           'filesize' => $file->getSize(),
-          'url' => $uri->getScheme().'://'.$uri->getHost().'/media/'.$file->getClientFilename()
+          'url' => $uri->getScheme().'://'.$uri->getHost().'/media/'.$file->getClientFilename(),
+          'download' => false
         ]);
-        $collection->push($file);
+        $collection->push($f);
 
         $file->moveTo($this->settings['mediaDir'].$file->getClientFilename());
       }
@@ -65,5 +73,10 @@ class FileController extends BaseController
     File::destroy($args['id']);
 
     return $response;
+  }
+
+  private function getFiles($files)
+  {
+
   }
 }
