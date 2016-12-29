@@ -3,7 +3,7 @@
     "description": "The Core module for the MixedBerries CMS PHP (Blueberry) backend",
     "type": "project",
     "config": {
-      "vendor-dir": "modules"
+      "vendor-dir": "vendor"
     },
     "require": {
         "slim/slim": "^3.1",
