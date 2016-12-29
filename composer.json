@@ -3,14 +3,14 @@
     "description": "The Core module for the MixedBerries CMS PHP (Blueberry) backend",
     "type": "project",
     "config": {
-      "vendor-dir": "vendor"
+      "vendor-dir": "modules"
     },
     "require": {
         "slim/slim": "^3.1",
         "slim/flash": "^0.1.0",
         "illuminate/database": "^5.2",
         "illuminate/events": "^5.2",
-        "firebase/php-jwt": "^3.0"    
+        "firebase/php-jwt": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
